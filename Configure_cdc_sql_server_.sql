@@ -81,3 +81,24 @@ WHILE @@FETCH_STATUS = 0
 CLOSE CDC_Cursor
 
 DEALLOCATE CDC_Cursor
+
+
+/*  QUERY TO VIEW LOGS CDC   */
+/*
+op_code*/
+1 - DELETE
+2 - INSERT
+3 - UPDATE BEFORE
+4 - UPDATE AFTER
+*/
+
+/*Query net changes*/
+select * from cdc.[fn_cdc_get_net_changes_dbo_friends](sys.fn_cdc_get_min_lsn('dbo_friends'), sys.fn_cdc_get_max_lsn(), 'all');
+/*Query all the changes history*/
+
+select 
+convert ( varchar(1000),__$start_lsn,2) as start_lsn,__$operation as op_code, id,name
+from cdc.[fn_cdc_get_all_changes_dbo_friends](sys.fn_cdc_get_min_lsn('dbo_friends'), sys.fn_cdc_get_max_lsn(), 'all update old')
+
+
+
